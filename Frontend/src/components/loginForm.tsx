@@ -3,6 +3,7 @@ import { Input } from "./ui/input"
 import { Eye, EyeOff, Mail, Lock, Loader2, AlertCircle } from "lucide-react"
 import { useState } from "react"
 import { Label } from "./ui/label"
+import { supabase } from "#lib/supabase"
 
 interface FormErrors {
   email?: string
@@ -16,38 +17,24 @@ export function LoginForm() {
   const [formData, setFormData] = useState({ email: "", password: "" })
   const [errors, setErrors] = useState<FormErrors>({})
 
-  const validate = (): boolean => {
-    const newErrors: FormErrors = {}
-
-    if (!formData.email.trim()) {
-      newErrors.email = "Email address is required."
-    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
-      newErrors.email = "Enter a valid email address."
-    }
-
-    if (!formData.password) {
-      newErrors.password = "Password is required."
-    } else if (formData.password.length < 6) {
-      newErrors.password = "Password must be at least 6 characters."
-    }
-
-    setErrors(newErrors)
-    return Object.keys(newErrors).length === 0
-  }
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setErrors({})
-
-    if (!validate()) return
-
     setIsLoading(true)
     try {
       // Replace with your actual auth call
-      await new Promise((resolve) => setTimeout(resolve, 1500))
+      const { error } = await supabase.auth.signInWithPassword({
+        email: formData.email,
+        password: formData.password,
+      })
 
-      // On failure, set a general error:
-      setErrors({ general: "Invalid email or password. Please try again." })
+      if (error) {
+        setErrors({ general: error.message })
+      } else {
+        // Redirect or update UI on successful login
+      }
+
     } catch {
       setErrors({ general: "Something went wrong. Please try again." })
     } finally {

@@ -2,12 +2,25 @@ import { Route, Routes } from "react-router-dom";
 import ProtectedRoute from "./auth/protected";
 import { LoginForm } from "#components/loginForm";
 import { AuthPage } from "./auth/authPage";
+import AccountConfirmedPage from "./auth/confirmation";
+import OnboardingPage from "./pages/onboarding";
+import RequireOnboarding from "#components/requireOnboarding";
 
 
 function App() {
   return (
     <Routes>
       <Route path="/" element={<AuthPage />} />
+      <Route path="/confirmation" element={<AccountConfirmedPage />} />
+      <Route path="/onboarding"
+        element={
+          <ProtectedRoute>
+            <RequireOnboarding >
+              <OnboardingPage />
+            </RequireOnboarding>
+          </ProtectedRoute>
+        }
+      ></Route>
 
       {/* <Route
         element={

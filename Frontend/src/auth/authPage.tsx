@@ -1,6 +1,7 @@
 import { Footer } from "#components/footer";
 import { Header } from "#components/header";
 import { LoginForm } from "#components/loginForm";
+import { SignUpForm } from "#components/signupForm";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "#components/ui/card";
 import { Label } from "#components/ui/label";
 import {Tabs, TabsContent, TabsList, TabsTrigger } from "#components/ui/tabs";
@@ -42,6 +43,10 @@ export function AuthPage(){
                 {/* Login Tab */}
                 <TabsContent value="login">
                     <LoginForm></LoginForm>
+                </TabsContent>
+
+                <TabsContent value="signup">
+                    <SignUpForm></SignUpForm>
                 </TabsContent>
 
                 {/* Signup Tab */}
