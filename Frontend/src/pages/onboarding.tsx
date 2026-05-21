@@ -16,6 +16,7 @@ import {
   X
 } from "lucide-react"
 import { supabase } from "#lib/supabase"
+import { Header } from "#components/header"
 
 export default function OnboardingPage() {
   const navigator = useNavigate()
@@ -58,13 +59,13 @@ export default function OnboardingPage() {
       await supabase.from("restaurants").insert({
         name: restaurantName,
         address: address,
+        user_id: (await supabase.auth.getUser()).data.user?.id
         // In a real app, you'd upload the logo to storage and save the URL
       })
       // After successful setup, navigate to the main dashboard or home page
-      navigator("/")
+      navigator("/dashboard")
     } catch (error) {
       console.error("Error setting up restaurant:", error)
-      // Handle error (e.g., show notification)
     } finally {
       setIsLoading(false)
     }
@@ -76,19 +77,7 @@ export default function OnboardingPage() {
   return (
     <div className="min-h-screen bg-background flex flex-col">
       {/* Header */}
-      <header className="border-b border-border bg-card/50 backdrop-blur-sm">
-        <div className="container mx-auto px-4 py-4">
-          <div className="flex items-center gap-3">
-            <div className="flex items-center justify-center w-10 h-10 rounded-lg bg-primary/20">
-              <UtensilsCrossed className="h-5 w-5 text-primary" />
-            </div>
-            <div>
-              <h1 className="text-lg font-semibold text-foreground">TableFlow</h1>
-              <p className="text-xs text-muted-foreground">Restaurant POS System</p>
-            </div>
-          </div>
-        </div>
-      </header>
+      <Header />
 
       {/* Main Content */}
       <main className="flex-1 flex items-center justify-center p-4 md:p-8">

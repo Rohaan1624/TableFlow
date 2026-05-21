@@ -11,7 +11,7 @@ export function Header(){
             </div>
             <div>
               <h1 className="text-lg font-semibold text-foreground">TableFlow</h1>
-              <p className="text-xs text-muted-foreground">Restaurant POS System</p>
+              <p className="text-xs text-muted-foreground">Manage your restaurant with ease</p>
             </div>
           </div>
         </div>

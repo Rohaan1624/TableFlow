@@ -3,9 +3,7 @@ import { Header } from "#components/header";
 import { LoginForm } from "#components/loginForm";
 import { SignUpForm } from "#components/signupForm";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "#components/ui/card";
-import { Label } from "#components/ui/label";
 import {Tabs, TabsContent, TabsList, TabsTrigger } from "#components/ui/tabs";
-import { Mail } from "lucide-react";
 
 
 export function AuthPage(){
@@ -25,28 +23,28 @@ export function AuthPage(){
             </CardHeader>
             <CardContent className="pt-6">
               <Tabs defaultValue="login" className="w-full">
-                <TabsList className="grid w-full grid-cols-2 mb-6 bg-muted">
+                <TabsList className="grid w-full grid-cols-2 mb-6 bg-muted ">
                   <TabsTrigger
                     value="login"
-                    className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground"
+                    className="data-[state=active]:!bg-primary data-[state=active]:!text-primary-foreground"
                   >
                     Log In
                   </TabsTrigger>
                   <TabsTrigger
                     value="signup"
-                    className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground"
+                    className="data-[state=active]:!bg-primary data-[state=active]:!text-primary-foreground"
                   >
                     Sign Up
                   </TabsTrigger>
                 </TabsList>
 
                 {/* Login Tab */}
-                <TabsContent value="login">
-                    <LoginForm></LoginForm>
+                <TabsContent value="login" className="mt-0">
+                  <LoginForm />
                 </TabsContent>
 
-                <TabsContent value="signup">
-                    <SignUpForm></SignUpForm>
+                <TabsContent value="signup" className="mt-0">
+                  <SignUpForm />
                 </TabsContent>
 
                 {/* Signup Tab */}

@@ -1,6 +1,6 @@
 import { Button } from "./ui/button"
 import { Input } from "./ui/input"
-import { Eye, EyeOff, Mail, Lock, Loader2, AlertCircle } from "lucide-react"
+import { Eye, EyeOff, Mail, Lock, Loader2, AlertCircle, User } from "lucide-react"
 import { useState } from "react"
 import { Label } from "./ui/label"
 import { supabase } from "#lib/supabase"
@@ -14,7 +14,7 @@ interface FormErrors {
 export function SignUpForm() {
   const [showPassword, setShowPassword] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
-  const [formData, setFormData] = useState({ email: "", password: "" })
+  const [formData, setFormData] = useState({ fullName: "", email: "", password: "", confirmPassword: "" })
   const [errors, setErrors] = useState<FormErrors>({})
   const [success, setSuccess] = useState<String>("")
 
@@ -24,12 +24,22 @@ export function SignUpForm() {
     setErrors({})
     setSuccess("")
 
+    if (formData.password !== formData.confirmPassword) {
+      setErrors({ password: "Passwords do not match" })
+      return
+    }
+
     setIsLoading(true)
-    try {
-      // Replace with your actual auth call
-      const { error } = await supabase.auth.signUp({
+      try {
+        // Replace with your actual auth call
+        const { error } = await supabase.auth.signUp({
         email: formData.email,
         password: formData.password,
+        options: {
+          data: {
+            full_name: formData.fullName, // ← stored in auth.users raw_user_meta_data
+          },
+        },
       })
       
       
@@ -49,7 +59,7 @@ export function SignUpForm() {
 
   return (
     <form onSubmit={handleSubmit} className="space-y-5" noValidate>
-
+      
       {/* General / banner error */}
       {errors.general && (
         <div className="flex items-start gap-2.5 rounded-md border border-destructive/40 bg-destructive/10 px-3.5 py-3 text-sm text-destructive">
@@ -64,6 +74,25 @@ export function SignUpForm() {
           <span>{success}</span>
         </div>
       )}
+
+      {/* Full Name */}
+      <div className="space-y-1.5">
+        <Label htmlFor="fullName" className="text-sm font-medium text-foreground">
+          Full Name
+        </Label>
+        <div className="relative">
+          <User className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+          <Input
+            id="fullName"
+            type="text"
+            autoComplete="name"
+            placeholder="John Doe"
+            value={formData.fullName}
+            onChange={(e) => setFormData({ ...formData, fullName: e.target.value })}
+            className={`pl-10 h-12 bg-input border-border text-foreground placeholder:text-muted-foreground focus:border-primary focus:ring-primary `}
+          />
+        </div>
+      </div>
 
       {/* Email */}
       <div className="space-y-1.5">
@@ -127,6 +156,40 @@ export function SignUpForm() {
         )}
       </div>
 
+      {/* Confirm Password */}
+      <div className="space-y-1.5">
+        <Label htmlFor="confirmPassword" className="text-sm font-medium text-foreground">
+          Confirm Password
+        </Label>
+        <div className="relative">
+          <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+          <Input
+            id="confirmPassword"
+            type={showPassword ? "text" : "password"}
+            autoComplete="current-password"
+            placeholder="Confirm your password"
+            value={formData.confirmPassword}
+            onChange={(e) => setFormData({ ...formData, confirmPassword: e.target.value })}
+            className={`pl-10 pr-10 h-12 bg-input border-border text-foreground placeholder:text-muted-foreground focus:border-primary focus:ring-primary`}
+          />
+          <button
+            type="button"
+            onClick={() => setShowPassword(!showPassword)}
+            className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
+            aria-label={showPassword ? "Hide password" : "Show password"}
+          >
+            {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+          </button>
+        </div>
+        {errors.password && (
+          <p className="flex items-center gap-1.5 text-xs text-destructive">
+            <AlertCircle className="h-3.5 w-3.5 shrink-0" />
+            {errors.password}
+          </p>
+        )}
+      </div>
+
+
       {/* Submit */}
       <Button
         type="submit"
@@ -136,10 +199,10 @@ export function SignUpForm() {
         {isLoading ? (
           <>
             <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-            Signing in…
+            Creating account…
           </>
         ) : (
-          "Sign in"
+          "Create account"
         )}
       </Button>
 

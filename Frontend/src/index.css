@@ -5,6 +5,7 @@
 
 @custom-variant dark (&:is(.dark *));
 
+
 @theme inline {
     --font-heading: var(--font-sans);
     --font-sans: 'Geist Variable', sans-serif;
@@ -92,9 +93,9 @@
     --card-foreground: oklch(0.985 0 0);
     --popover: oklch(0.205 0 0);
     --popover-foreground: oklch(0.985 0 0);
-    --primary: oklch(0.922 0 0);
+    --primary: oklch(72.418% 0.16222 160.639);
     --primary-foreground: oklch(0.205 0 0);
-    --secondary: oklch(0.269 0 0);
+    --secondary: oklch(27.935% 0.00894 17.506);
     --secondary-foreground: oklch(0.985 0 0);
     --muted: oklch(0.269 0 0);
     --muted-foreground: oklch(0.708 0 0);
@@ -128,6 +129,7 @@
     }
   html {
     @apply font-sans;
+    scrollbar-gutter: stable;
     }
   button,
   [role="button"] {

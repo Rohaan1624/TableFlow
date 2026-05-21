@@ -4,6 +4,7 @@ import { Eye, EyeOff, Mail, Lock, Loader2, AlertCircle } from "lucide-react"
 import { useState } from "react"
 import { Label } from "./ui/label"
 import { supabase } from "#lib/supabase"
+import { useNavigate } from "react-router-dom"
 
 interface FormErrors {
   email?: string
@@ -12,6 +13,7 @@ interface FormErrors {
 }
 
 export function LoginForm() {
+  const navigate = useNavigate()
   const [showPassword, setShowPassword] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
   const [formData, setFormData] = useState({ email: "", password: "" })
@@ -40,6 +42,7 @@ export function LoginForm() {
     } finally {
       setIsLoading(false)
     }
+    navigate("/dashboard")
   }
 
   const hasFieldError = (field: keyof FormErrors) => !!errors[field]
