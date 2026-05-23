@@ -17,6 +17,7 @@ import {
 } from "lucide-react"
 import { supabase } from "#lib/supabase"
 import { Header } from "#components/header"
+import { uploadImage } from "#lib/uploadImage"
 
 export default function OnboardingPage() {
   const navigator = useNavigate()
@@ -31,17 +32,30 @@ export default function OnboardingPage() {
   const [logo, setLogo] = useState<File | null>(null)
   const [logoPreview, setLogoPreview] = useState<string | null>(null)
 
-  const handleLogoUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0]
-    if (file) {
-      setLogo(file)
-      const reader = new FileReader()
-      reader.onloadend = () => {
-        setLogoPreview(reader.result as string)
-      }
-      reader.readAsDataURL(file)
-    }
+  const [logoUrl, setLogoUrl] = useState<string | null>(null)
+
+  const handleLogoUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+  const file = e.target.files?.[0]
+  if (!file) return
+
+  setLogo(file)
+
+  // Local preview
+  const reader = new FileReader()
+  reader.onloadend = () => setLogoPreview(reader.result as string)
+  reader.readAsDataURL(file)
+
+  // Upload using file directly, not logo state
+  try {
+    const url = await uploadImage(file, "logos") // ← pass file directly
+    setLogoUrl(url)
+    console.log("Uploaded logo URL:", url) // ← log url not logoUrl (same reason)
+  } catch (error) {
+    console.error("Error uploading logo:", error)
   }
+}
+
+// Remove uploadLogo entirely, it's no longer needed
 
   const removeLogo = () => {
     setLogo(null)
@@ -59,8 +73,8 @@ export default function OnboardingPage() {
       await supabase.from("restaurants").insert({
         name: restaurantName,
         address: address,
-        user_id: (await supabase.auth.getUser()).data.user?.id
-        // In a real app, you'd upload the logo to storage and save the URL
+        user_id: (await supabase.auth.getUser()).data.user?.id,
+        logo_url: logoUrl,
       })
       // After successful setup, navigate to the main dashboard or home page
       navigator("/dashboard")
