@@ -28,13 +28,13 @@ import {
   Trash2,
   ImagePlus,
   X,
-  Loader2,
   UtensilsCrossed,
   FolderPlus,
 } from "lucide-react"
 import { supabase } from "#lib/supabase"
 import { uploadImage } from "#lib/uploadImage"
 import { AppHeader } from "#components/dashboardHeader"
+import { Loading } from "#components/loading"
 
 // ─── Types ─────────────────────────────────────────────────────────────────────
 
@@ -72,7 +72,6 @@ function MenuCard({ item, category, onEdit, onDelete, onToggle }: MenuCardProps)
         !item.is_available ? "opacity-55" : ""
       }`}
     >
-      {/* Image */}
       <div className="relative aspect-[4/3] bg-muted overflow-hidden">
         {item.img_url ? (
           <img
@@ -86,19 +85,14 @@ function MenuCard({ item, category, onEdit, onDelete, onToggle }: MenuCardProps)
           </div>
         )}
 
-        {/* Category badge */}
         {category && (
           <div className="absolute top-2.5 left-2.5">
-            <Badge
-              variant="secondary"
-              className="text-[11px] px-2 py-0.5 bg-background/85 backdrop-blur-sm border-0 font-medium"
-            >
+            <Badge variant="secondary" className="text-[11px] px-2 py-0.5 bg-background/85 backdrop-blur-sm border-0 font-medium">
               {category.name}
             </Badge>
           </div>
         )}
 
-        {/* Edit / Delete — always visible on touch, hover on desktop */}
         <div className="absolute top-2.5 right-2.5 flex gap-1.5 md:opacity-0 md:group-hover:opacity-100 transition-opacity">
           <button
             onClick={() => onEdit(item)}
@@ -116,7 +110,6 @@ function MenuCard({ item, category, onEdit, onDelete, onToggle }: MenuCardProps)
           </button>
         </div>
 
-        {/* Unavailable overlay */}
         {!item.is_available && (
           <div className="absolute inset-0 flex items-center justify-center">
             <span className="bg-background/80 backdrop-blur-sm text-foreground text-xs font-semibold px-3 py-1 rounded-full border border-border">
@@ -126,7 +119,6 @@ function MenuCard({ item, category, onEdit, onDelete, onToggle }: MenuCardProps)
         )}
       </div>
 
-      {/* Content */}
       <div className="p-3.5">
         <div className="flex items-start justify-between gap-2 mb-1">
           <h3 className="font-semibold text-foreground leading-snug text-sm">{item.name}</h3>
@@ -163,32 +155,22 @@ export default function MenuPage() {
   const [activeCategory, setActiveCategory] = useState<string>("all")
   const [loading, setLoading] = useState(true)
 
-  // Dialogs
   const [itemDialogOpen, setItemDialogOpen] = useState(false)
   const [categoryDialogOpen, setCategoryDialogOpen] = useState(false)
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false)
   const [editingItem, setEditingItem] = useState<MenuItem | null>(null)
   const [deletingItem, setDeletingItem] = useState<MenuItem | null>(null)
 
-  // Item form
   const [form, setForm] = useState({
-    name: "",
-    description: "",
-    ingredients: "",
-    price: "",
-    category_id: "",
-    is_available: true,
+    name: "", description: "", ingredients: "", price: "", category_id: "", is_available: true,
   })
   const [imageFile, setImageFile] = useState<File | null>(null)
   const [imagePreview, setImagePreview] = useState<string | null>(null)
   const [isSaving, setIsSaving] = useState(false)
   const fileInputRef = useRef<HTMLInputElement>(null)
 
-  // Category form
   const [newCategoryName, setNewCategoryName] = useState("")
   const [isSavingCategory, setIsSavingCategory] = useState(false)
-
-  // ── Fetch ───────────────────────────────────────────────────────────────────
 
   useEffect(() => {
     async function load() {
@@ -196,10 +178,7 @@ export default function MenuPage() {
       if (!user) return
 
       const { data: restaurant } = await supabase
-        .from("restaurants")
-        .select("id")
-        .eq("user_id", user.id)
-        .maybeSingle()
+        .from("restaurants").select("id").eq("user_id", user.id).maybeSingle()
 
       if (!restaurant) return
       setRestaurantId(restaurant.id)
@@ -216,12 +195,9 @@ export default function MenuPage() {
     load()
   }, [])
 
-  const filteredItems =
-    activeCategory === "all"
-      ? items
-      : items.filter((i) => i.category_id === activeCategory)
-
-  // ── Handlers ────────────────────────────────────────────────────────────────
+  const filteredItems = activeCategory === "all"
+    ? items
+    : items.filter((i) => i.category_id === activeCategory)
 
   function openAdd() {
     setEditingItem(null)
@@ -289,11 +265,7 @@ export default function MenuPage() {
 
   async function toggleAvailability(item: MenuItem) {
     const { data } = await supabase
-      .from("menu")
-      .update({ is_available: !item.is_available })
-      .eq("id", item.id)
-      .select()
-      .single()
+      .from("menu").update({ is_available: !item.is_available }).eq("id", item.id).select().single()
     setItems((prev) => prev.map((i) => (i.id === item.id ? data : i)))
   }
 
@@ -304,8 +276,7 @@ export default function MenuPage() {
       const { data } = await supabase
         .from("categories")
         .insert({ restaurant_id: restaurantId, name: newCategoryName.trim(), sort_order: categories.length })
-        .select()
-        .single()
+        .select().single()
       setCategories((prev) => [...prev, data])
       setNewCategoryName("")
       setCategoryDialogOpen(false)
@@ -325,11 +296,8 @@ export default function MenuPage() {
     reader.readAsDataURL(file)
   }
 
-  // ── Header actions ──────────────────────────────────────────────────────────
-
   const headerActions = (
     <>
-      {/* Desktop */}
       <Button variant="outline" size="sm" onClick={() => setCategoryDialogOpen(true)} className="hidden sm:flex">
         <FolderPlus className="h-4 w-4 mr-1.5" />
         Category
@@ -338,8 +306,6 @@ export default function MenuPage() {
         <Plus className="h-4 w-4 mr-1.5" />
         Add Item
       </Button>
-
-      {/* Mobile — large tap targets */}
       <button
         onClick={() => setCategoryDialogOpen(true)}
         className="sm:hidden w-10 h-10 rounded-xl border border-border bg-background flex items-center justify-center text-muted-foreground active:bg-muted transition-colors"
@@ -357,35 +323,22 @@ export default function MenuPage() {
     </>
   )
 
-  // ── Loading ─────────────────────────────────────────────────────────────────
-
-  if (loading) {
-    return (
-      <div className="flex min-h-svh items-center justify-center">
-        <Loader2 className="h-8 w-8 animate-spin text-primary" />
-      </div>
-    )
-  }
-
-  // ── Render ──────────────────────────────────────────────────────────────────
+  if (loading) return <Loading message="Loading menu…" />
 
   return (
     <div className="flex flex-col min-h-svh bg-background">
-
-      {/* AppHeader handles sticky + back arrow + title + desktop controls */}
       <AppHeader actions={headerActions} />
 
-      {/* Main content */}
-      <main className="flex-1 container mx-auto px-4 py-2 pb-28 md:pb-8">
-         {/* Category pills — sticky just below the header */}
-      <div className="top-[57px] z-30 bg-background/95 backdrop-blur-sm border-b border-border mb-4 ">
+      
 
+      <main className="flex-1 container mx-auto px-4 py-4 pb-28 md:pb-8">
+        {/* Category pills — sticky just below AppHeader */}
+      <div className="top-[57px] z-30 mb-4 bg-background/95 backdrop-blur-sm border-b border-border">
         <div className="flex gap-2 px-4 py-2.5 overflow-x-auto scrollbar-none">
           {[
             { id: "all", name: "All", count: items.length },
             ...categories.map((c) => ({
-              id: c.id,
-              name: c.name,
+              id: c.id, name: c.name,
               count: items.filter((i) => i.category_id === c.id).length,
             })),
           ].map((cat) => (
@@ -410,9 +363,7 @@ export default function MenuPage() {
             </div>
             <p className="text-foreground font-semibold text-lg mb-1">No items here</p>
             <p className="text-sm text-muted-foreground mb-6 max-w-xs">
-              {activeCategory === "all"
-                ? "Add your first menu item to get started"
-                : "No items in this category yet"}
+              {activeCategory === "all" ? "Add your first menu item to get started" : "No items in this category yet"}
             </p>
             <Button onClick={openAdd} size="lg" className="rounded-xl px-6">
               <Plus className="h-4 w-4 mr-2" />
@@ -435,17 +386,14 @@ export default function MenuPage() {
         )}
       </main>
 
-      {/* ── Add/Edit Item Dialog ───────────────────────────────────────────────── */}
+      {/* ── Add/Edit Item Dialog ───────────────────────────────────────────── */}
       <Dialog open={itemDialogOpen} onOpenChange={setItemDialogOpen}>
         <DialogContent className="w-full max-w-lg mx-auto max-h-[92dvh] overflow-y-auto rounded-2xl p-0">
           <DialogHeader className="px-5 pt-5 pb-0">
-            <DialogTitle className="text-lg">
-              {editingItem ? "Edit Item" : "Add Menu Item"}
-            </DialogTitle>
+            <DialogTitle className="text-lg">{editingItem ? "Edit Item" : "Add Menu Item"}</DialogTitle>
           </DialogHeader>
 
           <div className="px-5 py-4 space-y-4">
-            {/* Image */}
             <div>
               <Label className="mb-2 block text-sm">Photo</Label>
               {imagePreview ? (
@@ -472,7 +420,6 @@ export default function MenuPage() {
               <input ref={fileInputRef} type="file" accept="image/*" capture="environment" className="hidden" onChange={handleImageChange} />
             </div>
 
-            {/* Name + Price */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               <div className="space-y-1.5">
                 <Label htmlFor="item-name" className="text-sm">Name</Label>
@@ -484,7 +431,6 @@ export default function MenuPage() {
               </div>
             </div>
 
-            {/* Category */}
             {categories.length > 0 && (
               <div className="space-y-1.5">
                 <Label htmlFor="item-category" className="text-sm">Category</Label>
@@ -500,19 +446,16 @@ export default function MenuPage() {
               </div>
             )}
 
-            {/* Description */}
             <div className="space-y-1.5">
               <Label htmlFor="item-description" className="text-sm">Description</Label>
               <Textarea id="item-description" placeholder="Short description..." className="resize-none" rows={2} value={form.description} onChange={(e) => setForm({ ...form, description: e.target.value })} />
             </div>
 
-            {/* Ingredients */}
             <div className="space-y-1.5">
               <Label htmlFor="item-ingredients" className="text-sm">Ingredients</Label>
               <Textarea id="item-ingredients" placeholder="salmon, lemon butter, asparagus..." className="resize-none" rows={2} value={form.ingredients} onChange={(e) => setForm({ ...form, ingredients: e.target.value })} />
             </div>
 
-            {/* Available toggle */}
             <div className="flex items-center justify-between rounded-xl border border-border p-3.5 bg-muted/20">
               <div>
                 <p className="text-sm font-medium text-foreground">Available</p>
@@ -525,13 +468,13 @@ export default function MenuPage() {
           <DialogFooter className="px-5 pb-5 pt-2 flex flex-row gap-2 border-t border-border">
             <Button variant="outline" onClick={() => setItemDialogOpen(false)} className="flex-1 h-11 rounded-xl">Cancel</Button>
             <Button onClick={handleSaveItem} disabled={isSaving || !form.name || !form.price} className="flex-1 h-11 rounded-xl">
-              {isSaving ? <><Loader2 className="mr-2 h-4 w-4 animate-spin" />Saving…</> : editingItem ? "Save Changes" : "Add Item"}
+              {isSaving ? "Saving…" : editingItem ? "Save Changes" : "Add Item"}
             </Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
 
-      {/* ── Add Category Dialog ────────────────────────────────────────────────── */}
+      {/* ── Add Category Dialog ────────────────────────────────────────────── */}
       <Dialog open={categoryDialogOpen} onOpenChange={setCategoryDialogOpen}>
         <DialogContent className="max-w-sm rounded-2xl">
           <DialogHeader>
@@ -552,13 +495,13 @@ export default function MenuPage() {
           <DialogFooter className="flex flex-row gap-2">
             <Button variant="outline" onClick={() => setCategoryDialogOpen(false)} className="flex-1 h-11 rounded-xl">Cancel</Button>
             <Button onClick={handleSaveCategory} disabled={isSavingCategory || !newCategoryName.trim()} className="flex-1 h-11 rounded-xl">
-              {isSavingCategory ? <Loader2 className="h-4 w-4 animate-spin" /> : "Create"}
+              {isSavingCategory ? "Creating…" : "Create"}
             </Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
 
-      {/* ── Delete Confirmation ────────────────────────────────────────────────── */}
+      {/* ── Delete Confirmation ────────────────────────────────────────────── */}
       <AlertDialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
         <AlertDialogContent className="rounded-2xl max-w-sm">
           <AlertDialogHeader>

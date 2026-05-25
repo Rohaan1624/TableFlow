@@ -8,6 +8,7 @@ import Dashboard from "./pages/Dashboard";
 import RequireRestaurant from "#components/requireRestaurant";
 import MenuPage from "./pages/Menu";
 import { DashboardLayout } from "./pages/dashboardLayout";
+import PublicMenuPage from "./pages/publicMenu";
 
 
 function App() {
@@ -25,6 +26,7 @@ function App() {
         }
       ></Route>
       
+      <Route path="/public-menu/:id" element={<PublicMenuPage />} />
       
       <Route
         element={
@@ -37,6 +39,7 @@ function App() {
       >
         <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/menu"      element={<MenuPage />} />
+        <Route path="/public-menu" element={<PublicMenuPage />} />
         {/* <Route path="/tables"    element={<TablesPage />} />
         <Route path="/staff"     element={<StaffPage />} /> */}
       </Route>
