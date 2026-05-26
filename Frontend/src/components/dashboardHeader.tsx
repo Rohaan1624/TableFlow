@@ -1,4 +1,4 @@
-import { LogOut, Settings, UtensilsCrossed, ArrowLeft, FolderPlus, Plus } from "lucide-react"
+import { LogOut, Settings, UtensilsCrossed, ArrowLeft, FolderPlus, Plus, QrCode } from "lucide-react"
 import { ThemeToggle } from "./themeToggle"
 import { Link, useLocation, useNavigate } from "react-router-dom"
 import { Button } from "./ui/button"
@@ -17,6 +17,7 @@ const PAGE_CONFIG: Record<string, { title: string; subtitle: string; showBack?: 
   "/dashboard": { title: "TableFlow",  subtitle: "Dashboard" },
   "/menu":      { title: "Menu",       subtitle: "Manage your items", showBack: true },
   "/tables":    { title: "Tables",     subtitle: "Floor overview",    showBack: true },
+  "/qr-code":   { title: "QR Code",  subtitle: "Your public menu QR code", showBack: true },
   "/staff":     { title: "Staff",      subtitle: "Your team",         showBack: true },
   "/settings":  { title: "Settings",   subtitle: "Preferences",       showBack: true },
 }
@@ -34,7 +35,6 @@ export function AppHeader({ actions }: AppHeaderProps) {
   const location = useLocation()
   const navigate = useNavigate()
   const config = PAGE_CONFIG[location.pathname] ?? { title: "TableFlow", subtitle: "" }
-  const isRoot = location.pathname === "/dashboard"
 
   return (
     <header className="sticky top-0 z-50 border-b border-border bg-card/80 backdrop-blur-md">
@@ -75,6 +75,16 @@ export function AppHeader({ actions }: AppHeaderProps) {
             {/* Always-present desktop controls */}
             <div className="hidden md:flex items-center gap-1 ml-1 pl-2 border-l border-border">
               <ThemeToggle />
+              <Button
+                variant="ghost"
+                size="icon"
+                asChild
+                className="hover:bg-primary/10 hover:text-primary"
+              >
+                <Link to="/qr-code">
+                  <QrCode className="h-4 w-4" />
+                </Link>
+              </Button>
               <Button
                 variant="ghost"
                 size="icon"

@@ -1,11 +1,10 @@
 import { AppHeader } from "#components/dashboardHeader";
-import DesktopFooter from "#components/desktopFooter";
-import MobileNav from "#components/mobileNav";
-import { BookOpen, Users, UtensilsCrossed, LayoutDashboard, UtensilsCrossed as Logo, Lightbulb } from "lucide-react";
+import { BookOpen, Users, UtensilsCrossed, UtensilsCrossed as Logo, Lightbulb } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
-import { NavLink, Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 export default function Dashboard() {
+    
     return (
         <>
         <AppHeader />
