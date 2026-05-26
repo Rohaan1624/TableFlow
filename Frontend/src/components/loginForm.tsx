@@ -35,6 +35,7 @@ export function LoginForm() {
         setErrors({ general: error.message })
       } else {
         // Redirect or update UI on successful login
+        navigate("/dashboard")
       }
 
     } catch {
@@ -42,7 +43,6 @@ export function LoginForm() {
     } finally {
       setIsLoading(false)
     }
-    navigate("/dashboard")
   }
 
   const hasFieldError = (field: keyof FormErrors) => !!errors[field]
