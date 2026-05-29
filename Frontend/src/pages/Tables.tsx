@@ -25,7 +25,6 @@ interface MenuItem {
   id: string
   name: string
   price: number
-  category: string
 }
 
 interface OrderLine {
@@ -33,23 +32,6 @@ interface OrderLine {
   qty: number
   note: string
 }
-
-// ─── Mock menu (swap with supabase fetch) ─────────────────────────────────────
-
-const MENU: MenuItem[] = [
-  { id: "m1",  name: "Tacos al pastor",   price: 12, category: "Mains"   },
-  { id: "m2",  name: "Quesadilla",         price: 9,  category: "Mains"   },
-  { id: "m3",  name: "Ceviche",            price: 14, category: "Mains"   },
-  { id: "m4",  name: "Filete a la plancha",price: 18, category: "Mains"   },
-  { id: "m5",  name: "Ensalada verde",     price: 7,  category: "Sides"   },
-  { id: "m6",  name: "Arroz con leche",    price: 6,  category: "Sides"   },
-  { id: "m7",  name: "Agua fresca",        price: 4,  category: "Drinks"  },
-  { id: "m8",  name: "Vino tinto",         price: 8,  category: "Drinks"  },
-  { id: "m9",  name: "Cerveza",            price: 5,  category: "Drinks"  },
-  { id: "m10", name: "Churros",            price: 6,  category: "Dessert" },
-]
-
-const CATEGORIES = ["Mains", "Sides", "Drinks", "Dessert"]
 
 // ─── Table card ───────────────────────────────────────────────────────────────
 
@@ -91,13 +73,11 @@ function TableCard({
         >
           {occupied ? "occupied" : "free"}
         </span>
-        {/* occupied dot */}
         {occupied && (
           <span className="absolute top-2.5 right-2.5 w-2 h-2 rounded-full bg-amber-400" />
         )}
       </button>
 
-      {/* Delete button in edit mode */}
       {editMode && (
         <button
           onClick={onDelete}
@@ -114,17 +94,36 @@ function TableCard({
 
 function OrderSheet({
   table,
+  restaurantId,
   onClose,
   onSent,
 }: {
   table: Table
+  restaurantId: string
   onClose: () => void
   onSent: (tableId: string) => void
 }) {
-  const [activeCategory, setActiveCategory] = useState("Mains")
-  const [lines, setLines] = useState<OrderLine[]>([])
-  const [sending, setSending] = useState(false)
-  const [sent, setSent] = useState(false)
+  const [menu, setMenu]               = useState<MenuItem[]>([])
+  const [menuLoading, setMenuLoading] = useState(true)
+  const [lines, setLines]             = useState<OrderLine[]>([])
+  const [sending, setSending]         = useState(false)
+  const [sent, setSent]               = useState(false)
+
+  // Fetch menu from Supabase
+  useEffect(() => {
+    if (!restaurantId) return
+    supabase
+      .from("menu")
+      .select("id, name, price")
+      .eq("restaurant_id", restaurantId)
+      .eq("is_available", true)
+      .order("name")
+      .then(({ data, error }) => {
+        if (error) console.error("Failed to fetch menu:", error)
+        setMenu(data ?? [])
+        setMenuLoading(false)
+      })
+  }, [restaurantId])
 
   const addItem = (item: MenuItem) => {
     setLines((prev) => {
@@ -142,18 +141,66 @@ function OrderSheet({
     )
   }
 
-  const total = lines.reduce((s, l) => s + l.item.price * l.qty, 0)
+  const total     = lines.reduce((s, l) => s + l.item.price * l.qty, 0)
   const itemCount = lines.reduce((s, l) => s + l.qty, 0)
 
   const sendOrder = async () => {
     if (lines.length === 0) return
     setSending(true)
-    // TODO: insert into orders + order_items tables
-    // await supabase.from("orders").insert({ table_id: table.id, status: "pending", items: lines })
-    await new Promise((r) => setTimeout(r, 700)) // remove when wired
-    setSent(true)
-    setTimeout(() => { onSent(table.id); onClose() }, 900)
-    setSending(false)
+
+    try {
+      // 1. Find the active reservation for this table
+      const { data: reservation, error: resError } = await supabase
+        .from("reservations")
+        .select("id, restaurant_id")
+        .eq("table_id", table.id)
+        .is("closed_at", null)
+        .order("seated_at", { ascending: false })
+        .limit(1)
+        .single()
+
+      if (resError || !reservation) throw new Error("No active reservation for this table")
+
+      // 2. Insert the order
+      const { data: order, error: orderError } = await supabase
+        .from("orders")
+        .insert({
+          restaurant_id:  reservation.restaurant_id,
+          reservation_id: reservation.id,
+          status:         0,
+          total:          +total.toFixed(2),
+        })
+        .select("id")
+        .single()
+
+      if (orderError || !order) throw orderError
+
+      // 3. Insert all items
+      const { error: itemsError } = await supabase
+        .from("items")
+        .insert(
+          lines.map((l) => ({
+            order_id:   order.id,
+            menu_id:    l.item.id,
+            qty:        l.qty,
+            unit_price: l.item.price,
+            total:      +(l.item.price * l.qty).toFixed(2),
+            notes:      l.note ?? null,
+            status:     0,
+          }))
+        )
+
+      if (itemsError) throw itemsError
+
+      setSent(true)
+      setTimeout(() => { onSent(table.id); onClose() }, 900)
+
+    } catch (err) {
+      console.error("Failed to send order:", err)
+      // TODO: show an error toast
+    } finally {
+      setSending(false)
+    }
   }
 
   return (
@@ -188,62 +235,54 @@ function OrderSheet({
           </button>
         </div>
 
-        {/* Category tabs */}
-        <div className="flex gap-1 px-4 pt-3 pb-2 overflow-x-auto scrollbar-none shrink-0">
-          {CATEGORIES.map((cat) => (
-            <button
-              key={cat}
-              onClick={() => setActiveCategory(cat)}
-              className={`px-3.5 py-1.5 rounded-full text-sm font-medium whitespace-nowrap transition-all ${
-                activeCategory === cat
-                  ? "text-white shadow-sm"
-                  : "bg-zinc-100 text-zinc-500 hover:bg-zinc-200"
-              }`}
-              style={activeCategory === cat ? { background: "var(--tf-accent)" } : {}}
-            >
-              {cat}
-            </button>
-          ))}
-        </div>
-
         {/* Menu items */}
         <div className="flex-1 overflow-y-auto px-4 pb-2">
-          <div className="grid grid-cols-2 gap-2 py-2">
-            {MENU.filter((m) => m.category === activeCategory).map((item) => {
-              const line = lines.find((l) => l.item.id === item.id)
-              const qty = line?.qty ?? 0
+          {menuLoading ? (
+            <div className="flex items-center justify-center h-32">
+              <div className="w-5 h-5 border-2 border-zinc-200 border-t-zinc-500 rounded-full animate-spin" />
+            </div>
+          ) : menu.length === 0 ? (
+            <div className="flex items-center justify-center h-32">
+              <p className="text-sm text-zinc-400">No menu items available</p>
+            </div>
+          ) : (
+            <div className="grid grid-cols-2 gap-2 py-3">
+              {menu.map((item) => {
+                const line = lines.find((l) => l.item.id === item.id)
+                const qty  = line?.qty ?? 0
 
-              return (
-                <button
-                  key={item.id}
-                  onClick={() => addItem(item)}
-                  className={`
-                    relative flex flex-col items-start p-3.5 rounded-xl border text-left
-                    transition-all active:scale-95
-                    ${qty > 0
-                      ? "border-amber-300 bg-amber-50"
-                      : "border-zinc-200 bg-zinc-50 hover:bg-white hover:border-zinc-300"
-                    }
-                  `}
-                >
-                  <span className={`text-sm font-semibold leading-snug ${qty > 0 ? "text-amber-900" : "text-zinc-800"}`}>
-                    {item.name}
-                  </span>
-                  <span className={`text-xs mt-0.5 ${qty > 0 ? "text-amber-600" : "text-zinc-400"}`}>
-                    ${item.price}
-                  </span>
-                  {qty > 0 && (
-                    <span
-                      className="absolute top-2 right-2 w-5 h-5 rounded-full text-white text-[11px] font-bold flex items-center justify-center"
-                      style={{ background: "var(--tf-accent)" }}
-                    >
-                      {qty}
+                return (
+                  <button
+                    key={item.id}
+                    onClick={() => addItem(item)}
+                    className={`
+                      relative flex flex-col items-start p-3.5 rounded-xl border text-left
+                      transition-all active:scale-95
+                      ${qty > 0
+                        ? "border-amber-300 bg-amber-50"
+                        : "border-zinc-200 bg-zinc-50 hover:bg-white hover:border-zinc-300"
+                      }
+                    `}
+                  >
+                    <span className={`text-sm font-semibold leading-snug ${qty > 0 ? "text-amber-900" : "text-zinc-800"}`}>
+                      {item.name}
                     </span>
-                  )}
-                </button>
-              )
-            })}
-          </div>
+                    <span className={`text-xs mt-0.5 ${qty > 0 ? "text-amber-600" : "text-zinc-400"}`}>
+                      ${item.price}
+                    </span>
+                    {qty > 0 && (
+                      <span
+                        className="absolute top-2 right-2 w-5 h-5 rounded-full text-white text-[11px] font-bold flex items-center justify-center"
+                        style={{ background: "var(--tf-accent)" }}
+                      >
+                        {qty}
+                      </span>
+                    )}
+                  </button>
+                )
+              })}
+            </div>
+          )}
         </div>
 
         {/* Order summary */}
@@ -307,11 +346,11 @@ function OrderSheet({
 // ─── Main page ────────────────────────────────────────────────────────────────
 
 export default function FloorView() {
-  const [tables, setTables] = useState<Table[]>([])
+  const [tables, setTables]             = useState<Table[]>([])
   const [restaurantId, setRestaurantId] = useState("")
-  const [loading, setLoading] = useState(true)
-  const [editMode, setEditMode] = useState(false)
-  const [activeTable, setActiveTable] = useState<Table | null>(null)
+  const [loading, setLoading]           = useState(true)
+  const [editMode, setEditMode]         = useState(false)
+  const [activeTable, setActiveTable]   = useState<Table | null>(null)
 
   const fetchTables = useCallback(async () => {
     const { data: { user } } = await supabase.auth.getUser()
@@ -333,7 +372,7 @@ export default function FloorView() {
 
     setTables(
       (dbTables ?? []).map((t) => ({
-        id: t.id,
+        id:     t.id,
         number: t.number,
         status: occupiedIds.has(t.id) ? "occupied" : "free",
       }))
@@ -379,7 +418,6 @@ export default function FloorView() {
       {/* ── Topbar ── */}
       <header className="flex items-center justify-between px-4 md:px-6 py-4 bg-white border-b border-zinc-100 shrink-0">
         <div className="flex items-center gap-3">
-          {/* Summary pills */}
           <div className="flex items-center gap-1.5">
             <span className="flex items-center gap-1 text-xs font-semibold px-2.5 py-1 rounded-full bg-zinc-100 text-zinc-600">
               <ShoppingBag className="w-3 h-3" /> {free} free
@@ -390,7 +428,6 @@ export default function FloorView() {
           </div>
         </div>
 
-        {/* Edit toggle */}
         <button
           onClick={() => setEditMode((v) => !v)}
           className={`flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-semibold transition-all ${
@@ -417,7 +454,6 @@ export default function FloorView() {
             />
           ))}
 
-          {/* Add table button */}
           {editMode && (
             <button
               onClick={addTable}
@@ -428,7 +464,6 @@ export default function FloorView() {
             </button>
           )}
 
-          {/* Empty state */}
           {tables.length === 0 && !editMode && (
             <div className="col-span-full flex flex-col items-center justify-center py-20 gap-3">
               <div className="w-12 h-12 rounded-2xl bg-zinc-100 flex items-center justify-center">
@@ -451,6 +486,7 @@ export default function FloorView() {
       {activeTable && (
         <OrderSheet
           table={activeTable}
+          restaurantId={restaurantId}
           onClose={() => setActiveTable(null)}
           onSent={handleOrderSent}
         />
