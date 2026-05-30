@@ -15,6 +15,10 @@ export function Header(){
             </div>
           </div>
         </div>
+        <div className ="hidden">
+          <ThemeToggle />
+        </div>
+        
       </header>
     )
 }

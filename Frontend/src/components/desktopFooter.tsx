@@ -10,7 +10,7 @@ const navItems = [
 
 export default function DesktopFooter() {
     return (
-        <footer className="hidden md:block border-t border-border bg-card/50 mt-auto">
+        <footer className="hidden lg:block border-t border-border bg-card/50 mt-auto">
             <div className="container mx-auto px-4 py-8">
                 <div className="grid grid-cols-3 gap-8 mb-8">
                     {/* Brand */}

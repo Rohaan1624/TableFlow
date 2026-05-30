@@ -1,4 +1,5 @@
 import { AppHeader } from "#components/dashboardHeader";
+import DesktopFooter from "#components/desktopFooter";
 import { BookOpen, Users, UtensilsCrossed, UtensilsCrossed as Logo, Lightbulb } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 import { useNavigate } from "react-router-dom";
@@ -21,9 +22,9 @@ export default function Dashboard() {
                     <FeatureCard route="/staff" icon={Users} title="Staff" description="Manage your team and their schedules" />
                 </section>
             </main>
+             <DesktopFooter />
         </>
-            
-            
+        
     )
 }
 

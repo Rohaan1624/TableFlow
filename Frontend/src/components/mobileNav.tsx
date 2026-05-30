@@ -10,7 +10,7 @@ const navItems = [
 
 export default function MobileNav() {
     return (
-        <nav className="fixed bottom-0 left-0 right-0 z-50 md:hidden border-t border-border bg-card/80 backdrop-blur-sm">
+        <nav className="fixed bottom-0 left-0 right-0 z-50 lg:hidden border-t border-border bg-card/80 backdrop-blur-sm">
             <div className="flex items-center justify-around py-2">
                 {navItems.map(({ to, icon: Icon, label }) => (
                     <NavLink

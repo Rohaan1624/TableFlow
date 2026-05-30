@@ -10,7 +10,6 @@ export function DashboardLayout() {
       <main className="flex-1 pb-24 md:pb-8">
         <Outlet /> {/* ← each page renders here */}
       </main>
-      <DesktopFooter />
       <MobileNav />
     </div>
   )
