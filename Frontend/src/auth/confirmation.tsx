@@ -1,4 +1,4 @@
-import { CheckCircle2, UtensilsCrossed, ArrowRight } from "lucide-react"
+import { CheckCircle2, ArrowRight } from "lucide-react"
 import { Button } from "#components/ui/button"
 import { Card, CardContent } from "#components/ui/card"
 import { useNavigate } from "react-router-dom"

@@ -22,7 +22,6 @@ import {
   Save,
   AlertTriangle,
 } from "lucide-react"
-import { useNavigate } from "react-router-dom"
 
 // ─── Section wrapper ──────────────────────────────────────────────────────────
 
@@ -90,7 +89,6 @@ function SaveButton({ status, onClick }: { status: SaveStatus; onClick: () => vo
 // ─── Main page ────────────────────────────────────────────────────────────────
 
 export default function SettingsPage() {
-  const navigate    = useNavigate()
   const { dark, setDark } = useTheme()
   const fileInputRef = useRef<HTMLInputElement>(null)
 

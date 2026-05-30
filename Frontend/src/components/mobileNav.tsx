@@ -1,4 +1,4 @@
-import { BookOpen, ChefHat, LayoutDashboard, Settings, Table, Users, UtensilsCrossed } from "lucide-react"
+import { BookOpen, ChefHat, Settings, UtensilsCrossed } from "lucide-react"
 import { NavLink } from "react-router-dom"
 
 const navItems = [

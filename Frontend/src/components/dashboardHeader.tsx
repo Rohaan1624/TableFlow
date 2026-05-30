@@ -1,4 +1,4 @@
-import { LogOut, Settings, UtensilsCrossed, ArrowLeft, FolderPlus, Plus, QrCode } from "lucide-react"
+import { LogOut, Settings, UtensilsCrossed, ArrowLeft, QrCode } from "lucide-react"
 import { ThemeToggle } from "./themeToggle"
 import { Link, useLocation, useNavigate } from "react-router-dom"
 import { Button } from "./ui/button"

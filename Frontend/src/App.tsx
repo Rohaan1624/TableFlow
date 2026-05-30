@@ -1,37 +1,43 @@
-import { Route, Routes } from "react-router-dom";
-import ProtectedRoute from "./auth/protected";
-import { AuthPage } from "./auth/authPage";
-import AccountConfirmedPage from "./auth/confirmation";
-import OnboardingPage from "./pages/onboarding";
-import RequireOnboarding from "#components/requireOnboarding";
-import Dashboard from "./pages/Dashboard";
-import RequireRestaurant from "#components/requireRestaurant";
-import MenuPage from "./pages/Menu";
-import { DashboardLayout } from "./pages/dashboardLayout";
-import PublicMenuPage from "./pages/publicMenu";
-import MenuQRPage from "./pages/QRpage";
-import FloorView from "./pages/Tables";
-import KitchenView from "./pages/Kitchen";
-import SettingsPage from "./pages/Settings";
-
+// src/App.tsx
+import { Route, Routes } from "react-router-dom"
+import LandingPage from "./pages/LandingPage"
+import { AuthPage } from "./auth/authPage"
+import AccountConfirmedPage from "./auth/confirmation"
+import OnboardingPage from "./pages/onboarding"
+import ProtectedRoute from "./auth/protected"
+import RequireOnboarding from "#components/requireOnboarding"
+import RequireRestaurant from "#components/requireRestaurant"
+import Dashboard from "./pages/Dashboard"
+import MenuPage from "./pages/Menu"
+import { DashboardLayout } from "./pages/dashboardLayout"
+import PublicMenuPage from "./pages/publicMenu"
+import MenuQRPage from "./pages/QRpage"
+import FloorView from "./pages/Tables"
+import KitchenView from "./pages/Kitchen"
+import SettingsPage from "./pages/Settings"
 
 function App() {
   return (
     <Routes>
-      <Route path="/" element={<AuthPage />} />
+      {/* Public */}
+      <Route path="/" element={<LandingPage />} />
+      <Route path="/auth" element={<AuthPage />} />
       <Route path="/confirmation" element={<AccountConfirmedPage />} />
-      <Route path="/onboarding"
+      <Route path="/public-menu/:id" element={<PublicMenuPage />} />
+
+      {/* Onboarding */}
+      <Route
+        path="/onboarding"
         element={
           <ProtectedRoute>
-            <RequireOnboarding >
+            <RequireOnboarding>
               <OnboardingPage />
             </RequireOnboarding>
           </ProtectedRoute>
         }
-      ></Route>
-      
-      <Route path="/public-menu/:id" element={<PublicMenuPage />} />
-      
+      />
+
+      {/* Dashboard (protected + requires restaurant) */}
       <Route
         element={
           <ProtectedRoute>
@@ -41,34 +47,15 @@ function App() {
           </ProtectedRoute>
         }
       >
-        <Route path="/dashboard" element={<Dashboard />} />
-        <Route path="/menu"      element={<MenuPage />} />
-        <Route path="/qr-code" element={<MenuQRPage />} />
-        <Route path="/tables"    element={<FloorView />} />
-        <Route path="/kitchen" element={<KitchenView />} />
-        <Route path="/settings"     element={<SettingsPage />} />
-        {/* <Route path="/qr-code" element={<QRpage />} /> */}
-        {/* <Route path="/tables"    element={<TablesPage />} />
-        <Route path="/staff"     element={<StaffPage />} /> */}
+        <Route path="/dashboard"  element={<Dashboard />} />
+        <Route path="/menu"       element={<MenuPage />} />
+        <Route path="/qr-code"    element={<MenuQRPage />} />
+        <Route path="/tables"     element={<FloorView />} />
+        <Route path="/kitchen"    element={<KitchenView />} />
+        <Route path="/settings"   element={<SettingsPage />} />
       </Route>
-
-      {/* <Route
-        element={
-          <ProtectedRoute>
-            <DashboardLayout />
-          </ProtectedRoute>
-        }
-      >
-        <Route path="/" element={<FacturaListView />} />
-        <Route path="/resumen" element={<Resumen />} />
-        <Route path="/productos" element={<ReferenciasListView />} />
-        <Route path="/clientes" element={<ClientesListView/>} />
-        <Route path="/compras" element={<CompraListView />}></Route>
-        <Route path="/e-facturas" element={<FacturaWizard />}></Route>
-      </Route> */}
-
     </Routes>
-  );
+  )
 }
 
-export default App;
+export default App

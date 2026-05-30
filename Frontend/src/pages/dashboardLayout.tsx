@@ -1,8 +1,6 @@
 // src/components/dashboardLayout.tsx
 import { Outlet } from "react-router-dom"
 import MobileNav from "#components/mobileNav"
-import DesktopFooter from "#components/desktopFooter"
-import { AppHeader } from "#components/dashboardHeader"
 
 export function DashboardLayout() {
   return (

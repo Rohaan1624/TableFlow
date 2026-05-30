@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
 import { QRCodeSVG } from "qrcode.react";
 import { Button } from "#components/ui/button";
-import { Badge } from "#components/ui/badge";
 import { Separator } from "#components/ui/separator";
 import { Download, Printer, Copy, Check, ExternalLink, Lightbulb } from "lucide-react";
 import { supabase } from "#lib/supabase";
