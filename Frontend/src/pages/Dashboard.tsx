@@ -1,6 +1,6 @@
 import { AppHeader } from "#components/dashboardHeader";
 import DesktopFooter from "#components/desktopFooter";
-import { BookOpen, UtensilsCrossed, UtensilsCrossed as Logo, Lightbulb, ChefHat } from "lucide-react";
+import { BookOpen, UtensilsCrossed, ChefHat } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
