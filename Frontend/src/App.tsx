@@ -11,6 +11,7 @@ import { DashboardLayout } from "./pages/dashboardLayout";
 import PublicMenuPage from "./pages/publicMenu";
 import MenuQRPage from "./pages/QRpage";
 import FloorView from "./pages/Tables";
+import KitchenView from "./pages/Kitchen";
 
 
 function App() {
@@ -43,6 +44,7 @@ function App() {
         <Route path="/menu"      element={<MenuPage />} />
         <Route path="/qr-code" element={<MenuQRPage />} />
         <Route path="/tables"    element={<FloorView />} />
+        <Route path="/kitchen" element={<KitchenView />} />
         {/* <Route path="/qr-code" element={<QRpage />} /> */}
         {/* <Route path="/tables"    element={<TablesPage />} />
         <Route path="/staff"     element={<StaffPage />} /> */}

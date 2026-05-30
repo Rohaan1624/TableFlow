@@ -1,11 +1,11 @@
-import { BookOpen, LayoutDashboard, Users, UtensilsCrossed } from "lucide-react"
+import { BookOpen, LayoutDashboard, Table, Users, UtensilsCrossed } from "lucide-react"
 import { NavLink } from "react-router-dom"
 
 const navItems = [
     { to: "/dashboard", icon: LayoutDashboard, label: "Home" },
     { to: "/menu",      icon: BookOpen,        label: "Menu"  },
-    { to: "/tables",    icon: UtensilsCrossed, label: "Tables"},
-    { to: "/staff",     icon: Users,           label: "Staff" },
+    { to: "/tables",    icon: Table, label: "Tables"},
+    { to: "/kitchen",   icon: UtensilsCrossed, label: "Kitchen" },
 ]
 
 export default function MobileNav() {

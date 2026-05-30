@@ -18,7 +18,7 @@ const PAGE_CONFIG: Record<string, { title: string; subtitle: string; showBack?: 
   "/menu":      { title: "Menu",       subtitle: "Manage your items", showBack: true },
   "/tables":    { title: "Tables",     subtitle: "Floor overview",    showBack: true },
   "/qr-code":   { title: "QR Code",  subtitle: "Your public menu QR code", showBack: true },
-  "/staff":     { title: "Staff",      subtitle: "Your team",         showBack: true },
+  "/kitchen":   { title: "Kitchen",      subtitle: "Your kitchen view",         showBack: true },
   "/settings":  { title: "Settings",   subtitle: "Preferences",       showBack: true },
 }
 
