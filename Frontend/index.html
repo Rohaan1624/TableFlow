@@ -2,16 +2,118 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>TableFlow</title>
+
+    <!-- ─── Primary SEO ─────────────────────────────────────────────────── -->
+    <title>TableFlow — Restaurant Management Software | Orders, Kitchen & Tables</title>
+    <meta name="description" content="TableFlow is the all-in-one restaurant management platform. Manage tables, send orders to the kitchen in real time, display a QR menu, and get push notifications — all from any device. Start your 7-day free trial." />
+    <meta name="keywords" content="restaurant management software, kitchen display system, table management, restaurant POS, QR menu, order management, restaurant app, TableFlow" />
+    <meta name="author" content="TableFlow" />
+    <meta name="robots" content="index, follow" />
+    <link rel="canonical" href="https://www.tableflow.io/" />
+
+    <!-- ─── Open Graph (Facebook, WhatsApp, LinkedIn) ───────────────────── -->
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://www.tableflow.io/" />
+    <meta property="og:site_name" content="TableFlow" />
+    <meta property="og:title" content="TableFlow — Run Your Restaurant, Not Your Stress" />
+    <meta property="og:description" content="Connect your floor, kitchen, and menu in one place. Stop losing orders to chaos. Start turning tables faster. Free 7-day trial — no credit card required." />
+    <meta property="og:image" content="https://www.tableflow.io/og-image.png" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content="TableFlow restaurant management dashboard showing live floor view and kitchen display" />
+    <meta property="og:locale" content="en_US" />
+
+    <!-- ─── Twitter / X Card ────────────────────────────────────────────── -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:site" content="@tableflowio" />
+    <meta name="twitter:creator" content="@tableflowio" />
+    <meta name="twitter:title" content="TableFlow — Run Your Restaurant, Not Your Stress" />
+    <meta name="twitter:description" content="Connect your floor, kitchen, and menu in one place. Stop losing orders to chaos. Free 7-day trial." />
+    <meta name="twitter:image" content="https://www.tableflow.io/og-image.png" />
+    <meta name="twitter:image:alt" content="TableFlow restaurant management dashboard" />
+
+    <!-- ─── Favicon & PWA icons ─────────────────────────────────────────── -->
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
+    <link rel="manifest" href="/site.webmanifest" />
+    <meta name="theme-color" content="#c8440a" />
+    <meta name="msapplication-TileColor" content="#c8440a" />
+
+    <!-- ─── PWA / Mobile ────────────────────────────────────────────────── -->
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <meta name="apple-mobile-web-app-title" content="TableFlow" />
+    <meta name="application-name" content="TableFlow" />
+    <meta name="format-detection" content="telephone=no" />
+
+    <!-- ─── Structured data (JSON-LD) ───────────────────────────────────── -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "SoftwareApplication",
+      "name": "TableFlow",
+      "url": "https://www.tableflow.io",
+      "logo": "https://www.tableflow.io/favicon.svg",
+      "applicationCategory": "BusinessApplication",
+      "operatingSystem": "Web, iOS, Android",
+      "description": "TableFlow is an all-in-one restaurant management platform. Manage tables, send orders to the kitchen in real time, display a QR menu, and get push notifications from any device.",
+      "offers": {
+        "@type": "Offer",
+        "price": "19.99",
+        "priceCurrency": "USD",
+        "priceSpecification": {
+          "@type": "UnitPriceSpecification",
+          "price": "19.99",
+          "priceCurrency": "USD",
+          "billingDuration": "P1M"
+        },
+        "eligibleRegion": {
+          "@type": "Place",
+          "name": "Worldwide"
+        }
+      },
+      "featureList": [
+        "Live floor view",
+        "Real-time kitchen display",
+        "QR public menu",
+        "Push notifications",
+        "Table management",
+        "Order management",
+        "Dark mode"
+      ],
+      "screenshot": "https://www.tableflow.io/og-image.png",
+      "aggregateRating": {
+        "@type": "AggregateRating",
+        "ratingValue": "4.9",
+        "reviewCount": "127"
+      }
+    }
+    </script>
+
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Organization",
+      "name": "TableFlow",
+      "url": "https://www.tableflow.io",
+      "logo": "https://www.tableflow.io/favicon.svg",
+      "sameAs": [
+        "https://twitter.com/tableflowio"
+      ]
+    }
+    </script>
+
+    <!-- ─── Theme: apply before paint to avoid flash of wrong theme ─────── -->
     <script>
-      // Apply saved theme before React mounts to avoid flash
       (function () {
         try {
-          const stored = localStorage.getItem('theme')
-          const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches
-          const isDark = stored ? stored === 'dark' : prefersDark
+          var stored = localStorage.getItem('theme')
+          var prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches
+          var isDark = stored ? stored === 'dark' : prefersDark
           if (isDark) document.documentElement.classList.add('dark')
         } catch (_) {}
       })()
