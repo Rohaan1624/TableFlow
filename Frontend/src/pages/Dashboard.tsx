@@ -1,6 +1,6 @@
 import { AppHeader } from "#components/dashboardHeader";
 import DesktopFooter from "#components/desktopFooter";
-import { BookOpen, Users, UtensilsCrossed, UtensilsCrossed as Logo, Lightbulb } from "lucide-react";
+import { BookOpen, Users, UtensilsCrossed, UtensilsCrossed as Logo, Lightbulb, ChefHat } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
@@ -19,7 +19,7 @@ export default function Dashboard() {
                 <section className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                     <FeatureCard route="/menu" icon={BookOpen} title="Menu" description="Manage dishes, categories, and pricing" />
                     <FeatureCard route="/tables" icon={UtensilsCrossed} title="Tables" description="Track table availability and reservations" />
-                    <FeatureCard route="/staff" icon={Users} title="Staff" description="Manage your team and their schedules" />
+                    <FeatureCard route="/kitchen" icon={ChefHat} title="Kitchen" description="Monitor order status and manage kitchen workflow" />
                 </section>
             </main>
              <DesktopFooter />
